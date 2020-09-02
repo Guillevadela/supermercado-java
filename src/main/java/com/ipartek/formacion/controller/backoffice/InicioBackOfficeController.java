@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
  */
 @WebServlet("/views/backoffice/inicio")
 public class InicioBackOfficeController extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 	private final static Logger LOG = Logger.getLogger(InicioBackOfficeController.class);
 
@@ -23,26 +23,26 @@ public class InicioBackOfficeController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		// TODO recueprar datos de inicio para el usuario
-		
+
+		// TODO recueprar datos de inicio para el administrador desde una vista, tenemos lo mismo hecho desde el front office controller
+
 		request.setAttribute("numero_productos", 34578);
 		request.setAttribute("numero_usuarios", 10000);
 		request.setAttribute("numero_logeados", 456);
 		request.setAttribute("productos_pendientes", 2);
-				
+
 		String pagina = "index.jsp";
 		LOG.debug("forward: " + pagina);
-		
-		request.getRequestDispatcher(pagina).forward(request, response);		
-		
+
+		request.getRequestDispatcher(pagina).forward(request, response);
+
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+
 		doGet(request, response);
 	}
 
