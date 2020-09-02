@@ -188,7 +188,7 @@ USE `supermercado`;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`debian-sys-maint`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `v_producto` AS select `p`.`id` AS `id`,`p`.`nombre` AS `nombre`,`p`.`precio` AS `precio`,`c`.`nombre` AS `categoria`,`u`.`nombre` AS `usuario`,`r`.`nombre` AS `rol` from (((`producto` `p` join `categoria` `c`) join `usuario` `u`) join `rol` `r`) where ((`p`.`id_categoria` = `c`.`id`) and (`u`.`id` = `p`.`id_usuario`) and (`u`.`id_rol` = `r`.`id`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -206,7 +206,7 @@ USE `supermercado`;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`debian-sys-maint`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `v_usuario_productos` AS select `p`.`id_usuario` AS `id_usuario`,count(`p`.`id_usuario`) AS `total`,count(`p`.`fecha_validado`) AS `aprobado`,sum(isnull(`p`.`fecha_validado`)) AS `pendiente` from `producto` `p` group by `p`.`id_usuario` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
