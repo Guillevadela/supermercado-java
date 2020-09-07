@@ -1,9 +1,11 @@
 package com.ipartek.formacion.modelo.dao.impl;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,14 +35,28 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 	}
 
 	// excuteQuery => ResultSet
-	private final String SQL_GET_ALL = " SELECT id, nombre FROM categoria ORDER BY nombre ASC; ";
+	// private final String SQL_GET_ALL = " SELECT id, nombre FROM categoria ORDER BY nombre ASC; ";
+	
+	// CUIDADO: que la llamada a los procedimientos en Java deben ir entra {} llaves
+	private final String PA_GET_ALL = " { CALL pa_categoria_listar() }  ";
+	
+	
 	private final String SQL_GET_ALL_WITH_PRODUCTS = " SELECT c.id 'categoria_id', c.nombre 'categoria_nombre', p.id 'producto_id', p.nombre 'producto_nombre', imagen, precio FROM producto p, categoria c WHERE p.id_categoria = c.id AND p.fecha_validado IS NOT NULL ORDER BY c.nombre ASC ; ";
-	private final String SQL_GET_BY_ID = " SELECT id, nombre FROM categoria WHERE id = ?; ";
+	
+	//private final String SQL_GET_BY_ID = " SELECT id, nombre FROM categoria WHERE id = ?; ";	
+	private final String PA_GET_BY_ID = " { CALL pa_categoria_por_id(?) } ";
 
 	//exceuteUpdate => int affectedRows
-	private final String SQL_INSERT = " INSERT INTO categoria ( nombre ) VALUES ( ? ) ; ";
-	private final String SQL_UPDATE = " UPDATE categoria SET nombre = ?  WHERE id = ? ; ";	
-	private final String SQL_DELETE = " DELETE FROM categoria WHERE id = ? ; ";
+	
+	
+	
+	//private final String SQL_INSERT = " INSERT INTO categoria ( nombre ) VALUES ( ? ) ; ";	
+	//private final String SQL_UPDATE = " UPDATE categoria SET nombre = ?  WHERE id = ? ; ";	
+	//private final String SQL_DELETE = " DELETE FROM categoria WHERE id = ? ; ";
+	
+	private final String PA_INSERT = " { CALL pa_categoria_insertar(?,?) } ";
+	private final String PA_UPDATE = " { CALL pa_categoria_update(?,?) } ";	
+	private final String PA_DELETE = " { CALL pa_categoria_delete(?) } ";
 	
 	@Override
 	public ArrayList<Categoria> getAll() {
@@ -48,11 +64,12 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 		ArrayList<Categoria> registros = new ArrayList<Categoria>();
 
 		try ( Connection conexion = ConnectionManager.getConnection();
-			  PreparedStatement pst = conexion.prepareStatement(SQL_GET_ALL);
-			  ResultSet rs = pst.executeQuery();
+			  // PreparedStatement pst = conexion.prepareStatement(SQL_GET_ALL);
+			  CallableStatement cs = conexion.prepareCall(PA_GET_ALL);
+			  ResultSet rs = cs.executeQuery();
 		) {
 
-			LOG.debug(pst);
+			LOG.debug(cs);
 			while (rs.next()) {
 				registros.add(mapper(rs));
 			} // while
@@ -117,12 +134,13 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 		Categoria registro = new Categoria();		
 		try (
 				Connection conexion = ConnectionManager.getConnection();
-				PreparedStatement pst = conexion.prepareStatement(SQL_GET_BY_ID);				
+				// PreparedStatement pst = conexion.prepareStatement(SQL_GET_BY_ID);
+				CallableStatement cs = conexion.prepareCall(PA_GET_BY_ID);
 			) {
 			
-				pst.setInt(1, id);
-				LOG.debug(pst);
-				ResultSet rs = pst.executeQuery();
+				cs.setInt(1, id);
+				LOG.debug(cs);
+				ResultSet rs = cs.executeQuery();
 				
 				if ( rs.next() ) {					
 					registro = mapper(rs);
@@ -141,15 +159,15 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 		
 		try(
 				Connection conexion = ConnectionManager.getConnection();	
-				PreparedStatement pst = conexion.prepareStatement(SQL_DELETE);				
+				CallableStatement cs = conexion.prepareCall(PA_DELETE);
 			){
 				// recuperar antes de eliminar
 				pojo = getById(id);
 			
 				// eliminar
-				pst.setInt(1, id );			
-				LOG.debug(pst);
-				pst.executeUpdate();	
+				cs.setInt(1, id );			
+				LOG.debug(cs);
+				cs.executeUpdate();	
 			
 		}
 		
@@ -161,24 +179,19 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 		
 		try(
 				Connection conexion = ConnectionManager.getConnection();	
-				PreparedStatement pst = conexion.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS);				
+				CallableStatement cs = conexion.prepareCall(PA_INSERT);				
 			){
 		
-				pst.setString(1, pojo.getNombre() );			
-				LOG.debug(pst);
+				cs.setString(1, pojo.getNombre() );                   // IN pNombre VARCHAR(100)
+				cs.registerOutParameter(2, java.sql.Types.INTEGER );  // OUT pIdGenerado INT
 				
-				int affectedRows = pst.executeUpdate();			
-				if ( affectedRows == 1 ) {					
-					try( ResultSet rsKeys = pst.getGeneratedKeys() ){						
-						if ( rsKeys.next() ) {
-							int id = rsKeys.getInt(1);
-							pojo.setId(id);
-						}						
-					}				
-					
-			}else {				
-				throw new Exception("No se ha podido guardar el registro " + pojo );
-			}
+				LOG.debug(cs);
+				
+				cs.execute();			
+				
+				int id = cs.getInt(2); // recojo el parametro de salida, despues de ejecutar el PA
+				
+				pojo.setId(id);
 		}
 		
 		return pojo;
@@ -189,14 +202,14 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 
 		try(
 				Connection conexion = ConnectionManager.getConnection();	
-				PreparedStatement pst = conexion.prepareStatement(SQL_UPDATE);				
+				CallableStatement cs = conexion.prepareCall(PA_UPDATE);				
 				
 			){
 						
-				pst.setString(1, pojo.getNombre() );				
-				pst.setInt(2, pojo.getId() );
-				LOG.debug(pst);
-				int affectedRows = pst.executeUpdate();
+				cs.setString(1, pojo.getNombre() );				
+				cs.setInt(2, pojo.getId() );
+				LOG.debug(cs);
+				int affectedRows = cs.executeUpdate();
 				if ( affectedRows != 1 ) {
 					throw new Exception("No se puede podificar el registro con id=" + pojo.getId() );
 				}
