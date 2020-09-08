@@ -266,6 +266,42 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `fn_saludar_idioma` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`debian-sys-maint`@`localhost` FUNCTION `fn_saludar_idioma`( pNombre VARCHAR(100), pIdioma VARCHAR(2) ) RETURNS varchar(100) CHARSET latin1
+BEGIN
+	
+	 DECLARE saludo VARCHAR(50);
+ 
+	 IF pNombre is NULL OR pNombre = '' THEN 
+		SET pNombre = 'Anonimo';
+	 END IF;
+	
+	 CASE pIdioma
+	  WHEN 'es' THEN SET saludo = CONCAT('Hola, ', pNombre);
+	  WHEN 'eu' THEN SET saludo = CONCAT('Kaixo, ', pNombre);
+	  WHEN 'en' THEN SET saludo = CONCAT('Hello, ', pNombre);
+	  ELSE BEGIN
+		 SET saludo = CONCAT('ERROR: Idioma desconocido ', pIdioma); 	
+      END;		  
+	 END CASE;
+	 
+	 RETURN saludo;
+	
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `pa_categoria_delete` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -299,10 +335,10 @@ CREATE DEFINER=`debian-sys-maint`@`localhost` PROCEDURE `pa_categoria_insertar`(
 BEGIN
 	
 	
-	-- realizamos la insert
+	
 	INSERT INTO categoria ( nombre ) VALUES ( TRIM(pNombre) );
 
-	-- guardamos en el parametro de salida el ultimo id generado usando una función
+	
 	SET pIdGenerado = LAST_INSERT_ID();
 	
 END ;;
@@ -324,7 +360,7 @@ DELIMITER ;;
 CREATE DEFINER=`debian-sys-maint`@`localhost` PROCEDURE `pa_categoria_listar`()
 BEGIN
 	
-	-- sentencias de SQL
+	
 	SELECT id, nombre FROM categoria ORDER BY nombre ASC; 
 	
 END ;;
@@ -403,7 +439,7 @@ BEGIN
 	WHERE 
 		p.id_categoria  = c.id AND p.id_usuario = u.id 	
 		AND fecha_validado IS NOT NULL 
-		AND c.id = idCategoria  -- filtramos por el id de la categoria
+		AND c.id = idCategoria  
 		ORDER BY p.id DESC LIMIT numReg ;	
 	
 END ;;
@@ -464,4 +500,4 @@ USE `supermercado`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-09-08  8:24:28
+-- Dump completed on 2020-09-08 11:46:38
