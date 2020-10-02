@@ -7,9 +7,10 @@
 	<form action="registro" method="post" onsubmit="cifrar()">
 			
 		
-		<div class="form-group">
+		<div class="form-group">			
 			<label for="nombre">nombre:</label>
-			<input type="text" name="nombre" id="nombre" value="${nombre}" class="form-control" placeholder="Escribe tu nombre de usuario" >
+			<small id="nombreHelp" class="form-text"></small>
+			<input type="text" name="nombre" onkeyUp="buscarUsuario(event)" id="nombre" value="${nombre}" class="form-control" placeholder="Escribe tu nombre de usuario" >			
 		</div>
 		
 		<div class="form-group">
@@ -29,7 +30,7 @@
 		</div>
 							
 				
-		<input type="submit" value="Guardar" class="btn btn-primary btn-block">
+		<input type="submit" id="btnLogin" disabled="disabled" value="Guardar" class="btn btn-primary btn-block">
 	</form>
 	
 
