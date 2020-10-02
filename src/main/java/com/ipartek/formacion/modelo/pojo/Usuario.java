@@ -1,12 +1,21 @@
 package com.ipartek.formacion.modelo.pojo;
 
 public class Usuario {
-	
+
+	/**
+	 * Pojo para gestionar un usuario
+	 * 
+	 * @see com.ipartek.formacion.modelo.pojo.Rol
+	 * 
+	 * @author Guillermo Vazquez De Lara Padilla
+	 * @version 1.0
+	 */
+
 	private int id;
 	private String nombre;
-	private String contrasenia;	
+	private String contrasenia;
 	private Rol rol;
-	
+
 	public Usuario() {
 		super();
 		this.id = 0;
@@ -51,7 +60,5 @@ public class Usuario {
 	public String toString() {
 		return "Usuario [id=" + id + ", nombre=" + nombre + ", contrasenia=" + contrasenia + ", rol=" + rol + "]";
 	}
-
-	
 
 }
