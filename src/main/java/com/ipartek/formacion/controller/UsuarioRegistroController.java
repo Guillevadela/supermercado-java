@@ -25,41 +25,39 @@ public class UsuarioRegistroController extends HttpServlet {
 	private static UsuarioDAOImpl daoUsuario = UsuarioDAOImpl.getInstance();
 
 	/**
-	 * Registrar un nuevo usuario en la bbdd Comprobamos que el nombre sea correcto
-	 * y no exista en la bbdd Comprobamos que la contraseña y la RE-contraseña sean
-	 * iguales Si todo va bien le redirigimos al login con un mensaje Si lago falla,
-	 * le mostramos el fallo y volvemos al formulario
+	 * Registrar un nuevo usuario en la bbdd Comprobamos que el nombre sea correcto y no exista en la bbdd Comprobamos que la contraseña y la RE-contraseña sean iguales Si todo va bien le redirigimos
+	 * al login con un mensaje Si algo falla, le mostramos el fallo y volvemos al formulario.
 	 * 
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * 
+	 * Y Asi amigos lo tenemos hecho... y ya si esooooo lo miramos otro dia con mas tiempo =)
+	 * 
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		LOG.trace("iniciando registro");
-		
+
 		Alerta alerta = new Alerta();
 		boolean isError = true;
 
 		// recoger parametros del formulario
-		String nombre = request.getParameter("nombre");		
+		String nombre = request.getParameter("nombre");
 		String pass = request.getParameter("pass");
 		String repass = request.getParameter("repass");
-		
-		//TODO String fecha = request.getParameter("fecha");
-		
-		
+
+		// TODO String fecha = request.getParameter("fecha");
+
 		try {
 
 			if (!pass.equalsIgnoreCase(repass)) {
 				alerta = new Alerta("warning", "No coinciden las contraseñas");
-				
+
 			} else {
 
 				Usuario usuario = new Usuario();
 				usuario.setNombre(nombre);
 				usuario.setContrasenia(pass);
-				
+
 				Rol rol = new Rol();
 				rol.setId(Rol.USUARIO);
 				usuario.setRol(rol);
@@ -81,17 +79,17 @@ public class UsuarioRegistroController extends HttpServlet {
 
 		} finally {
 
-			if (isError) {				
+			if (isError) {
 				request.setAttribute("nombre", nombre); // volvemos a enviar el parametro como atributo
 				request.getRequestDispatcher("views/registro.jsp").forward(request, response);
-				
+
 			} else {
 				alerta = new Alerta("info", "Registro realizado con exito");
 				response.sendRedirect(request.getContextPath() + "/views/login.jsp");
 			}
-			
+
 			request.getSession().setAttribute("alerta", alerta);
-			
+
 		} // finally
 
 	}// doPost
