@@ -15,6 +15,20 @@ import com.ipartek.formacion.modelo.pojo.Usuario;
 
 public class UsuarioDAOImpl implements UsuarioDAO {
 
+	/*
+	 * @author Guillermo Vazquez de Lara Padilla
+	 * 
+	 * <p> el metodo INSERT realiza una conexion con la BD y por medio de una consulta ataca a las tablas e introduce informacion nueva como también eliminar y modificar o actualizar datos</p> <p> al
+	 * final devolvera un usuario nuevo</p>
+	 * 
+	 * @param pojo Usuario
+	 * 
+	 * @ since jdk 8.0
+	 * 
+	 * @ return Usuario
+	 * 
+	 */
+
 	private static UsuarioDAOImpl INSTANCE = null;
 	private final static Logger LOG = Logger.getLogger(UsuarioDAOImpl.class);
 
@@ -49,9 +63,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 
 		ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
 
-		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(SQL_GET_ALL);
-				ResultSet rs = pst.executeQuery();) {
+		try (Connection con = ConnectionManager.getConnection(); PreparedStatement pst = con.prepareStatement(SQL_GET_ALL); ResultSet rs = pst.executeQuery();) {
 
 			LOG.debug(pst);
 			while (rs.next()) {
@@ -70,8 +82,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 
 		Usuario usuario = new Usuario();
 
-		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(SQL_GET_BY_ID);
+		try (Connection con = ConnectionManager.getConnection(); PreparedStatement pst = con.prepareStatement(SQL_GET_BY_ID);
 
 		) {
 
@@ -99,8 +110,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 
 		Usuario usuario = getById(id);
 
-		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(SQL_DELETE);) {
+		try (Connection con = ConnectionManager.getConnection(); PreparedStatement pst = con.prepareStatement(SQL_DELETE);) {
 
 			pst.setInt(1, id);
 			LOG.debug(pst);
@@ -116,8 +126,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 	@Override
 	public Usuario insert(Usuario pojo) throws Exception {
 
-		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS);) {
+		try (Connection con = ConnectionManager.getConnection(); PreparedStatement pst = con.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS);) {
 
 			pst.setString(1, pojo.getNombre());
 			pst.setString(2, pojo.getContrasenia());
@@ -146,8 +155,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 	@Override
 	public Usuario update(Usuario pojo) throws Exception {
 
-		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(SQL_UPDATE);) {
+		try (Connection con = ConnectionManager.getConnection(); PreparedStatement pst = con.prepareStatement(SQL_UPDATE);) {
 
 			pst.setString(1, pojo.getNombre());
 			pst.setString(2, pojo.getContrasenia());
@@ -169,8 +177,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 
 		ArrayList<Usuario> registros = new ArrayList<Usuario>();
 
-		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(SQL_GET_ALL_BY_NOMBRE);) {
+		try (Connection con = ConnectionManager.getConnection(); PreparedStatement pst = con.prepareStatement(SQL_GET_ALL_BY_NOMBRE);) {
 
 			pst.setString(1, "%" + palabraBuscada + "%");
 			LOG.debug(pst);
@@ -194,8 +201,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 
 		Usuario usuario = null;
 
-		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(SQL_EXISTE);
+		try (Connection con = ConnectionManager.getConnection(); PreparedStatement pst = con.prepareStatement(SQL_EXISTE);
 
 		) {
 
@@ -222,8 +228,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 	public boolean buscarByNombre(String nombre) {
 
 		boolean encontrado = false;
-		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(SQL_BUSCAR_POR_NOMBRE);) {
+		try (Connection con = ConnectionManager.getConnection(); PreparedStatement pst = con.prepareStatement(SQL_BUSCAR_POR_NOMBRE);) {
 
 			pst.setString(1, nombre);
 			LOG.debug(pst);
